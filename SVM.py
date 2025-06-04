@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
+from sklearn.model_selection import GridSearchCV
 
 df_train = pd.read_csv('train.csv')
 
@@ -19,7 +20,6 @@ X = pd.get_dummies(X, columns=['Embarked'], dtype=int)
 X.loc[:, 'Age'] = X['Age'].fillna(X['Age'].median())
 X.loc[:, 'Fare'] = X['Fare'].fillna(X['Fare'].median())
 
-print(X.head())
 
 # dzielnie danych na testowe i treningowe
 X_train, X_test, y_train, y_test = train_test_split(
@@ -61,3 +61,40 @@ def PredictTestData(model):
     return output_data
 
 
+
+def FindOptimalParams(a, b):
+    param_grid = [
+        {
+            'C': [0.5, 1, 10, 100],
+            'gamma': ['scale', 1, 0.1, 0.01, 0.001, 0.0001],
+            'kernel': ['rbf']
+        }
+    ]
+
+    optimal_params = GridSearchCV(
+        SVC(),
+        param_grid,
+        cv=5,
+        scoring='accuracy',
+        verbose=0
+    )
+
+    return optimal_params.fit(a, b)
+
+
+#print(FindOptimalParams(X_train, y_train))
+
+
+
+model = SVC(C=100, gamma=0.001, kernel='rbf')
+model.fit(X_train, y_train)
+
+#print(model.score(X_test, y_test))
+
+Y_predicted = model.predict(X_test)
+confusion_matrix = metrics.confusion_matrix(y_test, Y_predicted)
+cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix, display_labels = [0, 1])
+cm_display.plot()
+#plt.show()
+
+pd.DataFrame(PredictTestData(model)).to_csv('output.csv', index=False)
