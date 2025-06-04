@@ -73,13 +73,13 @@ for features, actual in zip(X_test, y_test):
 
 #sprawdzenie dokładności
 accuracy = correct / len(y_test)
-print(f"Accuracy: {accuracy:.2f}")
+#print(f"Accuracy: {accuracy:.2f}")
 
 #confusion matrix
 confusion_matrix = metrics.confusion_matrix(predicted_list, y_test)
 cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix, display_labels = [0, 1])
 cm_display.plot()
-plt.show()
+#plt.show()
 
 
 def PredictTestData():
@@ -116,11 +116,11 @@ def PredictTestData():
         output_data['PassengerId'].append(int(data[0]))
         output_data['Survived'].append(int(data[1]))
 
-    return pd.DataFrame(output_data)
+    return output_data
 
 
 #print(PredictTestData)
-#PredictTestData.to_csv('output.csv', index=False)
+pd.DataFrame(PredictTestData()).to_csv('output.csv', index=False)
 
 
 
