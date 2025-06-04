@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import metrics
+import numpy as np
 import matplotlib.pyplot as plt
 
 df_train = pd.read_csv('train.csv')
@@ -12,10 +13,13 @@ df_train['Embarked'] = df_train['Embarked'].map({'C': 0, 'Q': 1, 'S': 2})
 X = df_train[['Pclass', 'Sex', 'Age','SibSp','Parch', 'Fare', 'Embarked']]  # features
 y = df_train['Survived']
 
+X.loc[:, 'Embarked'] = X['Embarked'].fillna(0)
+X.loc[:, 'Embarked'] = X['Embarked'].replace([np.inf, -np.inf], 0)
+X = pd.get_dummies(X, columns=['Embarked'], dtype=int)
 X.loc[:, 'Age'] = X['Age'].fillna(X['Age'].median())
 X.loc[:, 'Fare'] = X['Fare'].fillna(X['Fare'].median())
-X.loc[:, 'Parch'] = X['Parch'].fillna(X['Parch'].median())
-X.loc[:, 'SibSp'] = X['SibSp'].fillna(X['SibSp'].median())
+
+print(X.head())
 
 # dzielnie danych na testowe i treningowe
 X_train, X_test, y_train, y_test = train_test_split(
@@ -41,10 +45,11 @@ def PredictTestData(model):
     df_test['Sex'] = df_test['Sex'].map({'female': 0, 'male': 1})
     df_test['Embarked'] = df_test['Embarked'].map({'C': 0, 'Q': 1, 'S': 2})
 
+    df_test.loc[:, 'Embarked'] = df_test['Embarked'].fillna(0)
+    df_test.loc[:, 'Embarked'] = df_test['Embarked'].replace([np.inf, -np.inf], 0)
+    df_test = pd.get_dummies(df_test, columns=['Embarked'], dtype=int)
     df_test.loc[:, 'Age'] = df_test['Age'].fillna(X['Age'].median())
     df_test.loc[:, 'Fare'] = df_test['Fare'].fillna(X['Fare'].median())
-    df_test.loc[:, 'Parch'] = df_test['Parch'].fillna(X['Parch'].median())
-    df_test.loc[:, 'SibSp'] = df_test['SibSp'].fillna(X['SibSp'].median())
 
 
 
