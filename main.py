@@ -81,16 +81,17 @@ cm_display.plot()
 
 
 
-
+#pobranie testowych danych
 df_test = pd.read_csv("test.csv")
 df_test = df_test[['PassengerId','Pclass', 'Sex', 'Age', 'Fare']]
 df_test['Sex'] = df_test['Sex'].map({'female': 0, 'male': 1})
 
-
+#uzupełnienie NaN
 df_test = df_test.fillna(df_test.median(numeric_only=True))
 
 test_data = df_test.values.tolist()
 
+#predykcja danych
 test_predictions = []
 for row in test_data:
     passenger_id = row[0]         # First element
@@ -101,6 +102,7 @@ for row in test_data:
 
 print(test_predictions)
 
+#sformatowanie danych pod wysyłke do kaggle
 output_data = {'PassengerId':[], 'Survived':[]}
 for data in test_predictions:
     output_data['PassengerId'].append(int(data[0]))
